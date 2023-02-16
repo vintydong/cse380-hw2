@@ -41,6 +41,13 @@ export const HW2Events = {
 
     LASER_MINE_COLLISION: "LASER_MINE_COLLISION",
 
-    MINE_EXPLODED: "MINE_EXPLODED"
+    MINE_EXPLODED: "MINE_EXPLODED",
+
+     /**
+     * The event that gets emitted when the player takes damage
+     * 
+     * Has data: { damage: number }
+     */
+    PLAYER_DAMAGE: "PLAYER_DAMAGE",
     
 } as const;

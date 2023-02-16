@@ -95,7 +95,7 @@ export default class MineBehavior implements AI {
     }
 
     protected handlePlayerMineCollision(event: GameEvent): void {
-        console.debug("Handling PlayerMine");
+        // console.debug("Handling PlayerMine");
         let id = event.data.get("id");
         if (id === this.owner.id) {
             this.owner.animation.playIfNotAlready(MineAnimations.EXPLODING, false, HW2Events.MINE_EXPLODED)

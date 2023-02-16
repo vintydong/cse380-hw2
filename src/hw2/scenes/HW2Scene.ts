@@ -170,9 +170,9 @@ export default class HW2Scene extends Scene {
 		// Subscribe to laser events
 		this.receiver.subscribe(HW2Events.FIRING_LASER);
 
-		// Subscribe to mine events
-		this.receiver.subscribe(HW2Events.PLAYER_MINE_COLLISION);
-		this.receiver.subscribe(HW2Events.MINE_EXPLODED);
+		// // Subscribe to mine events
+		// this.receiver.subscribe(HW2Events.PLAYER_MINE_COLLISION);
+		// this.receiver.subscribe(HW2Events.MINE_EXPLODED);
 	}
 	/**
 	 * @see Scene.updateScene 
@@ -188,7 +188,12 @@ export default class HW2Scene extends Scene {
 		this.moveBackgrounds(deltaT);
 
 		// Handles mine and bubble collisions
-		this.handleMinePlayerCollisions();
+		let minesCollided = this.handleMinePlayerCollisions();
+		if(minesCollided > 0){
+			console.log("Emitting player dmg")
+			this.emitter.fireEvent(HW2Events.PLAYER_DAMAGE, {damage: minesCollided});
+		}
+
 		this.bubblesPopped += this.handleBubblePlayerCollisions();
 
 		// Handle timers
@@ -770,10 +775,12 @@ export default class HW2Scene extends Scene {
 		let collisions = 0;
 		for (let mine of this.mines) {
 			if (mine.visible && this.player.collisionShape.overlaps(mine.collisionShape)) {
+				console.log("COLLISION")
 				this.emitter.fireEvent(HW2Events.PLAYER_MINE_COLLISION, {id: mine.id});
 				collisions += 1;
 			}
-		}	
+		}
+		
 		return collisions;
 	}
 
