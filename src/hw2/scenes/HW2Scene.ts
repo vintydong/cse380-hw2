@@ -169,6 +169,10 @@ export default class HW2Scene extends Scene {
 
 		// Subscribe to laser events
 		this.receiver.subscribe(HW2Events.FIRING_LASER);
+
+		// Subscribe to mine events
+		this.receiver.subscribe(HW2Events.PLAYER_MINE_COLLISION);
+		this.receiver.subscribe(HW2Events.MINE_EXPLODED);
 	}
 	/**
 	 * @see Scene.updateScene 
@@ -232,6 +236,12 @@ export default class HW2Scene extends Scene {
 			}
 			case HW2Events.FIRING_LASER: {
 				this.minesDestroyed += this.handleMineLaserCollisions(event.data.get("laser"), this.mines);
+				break;
+			}
+			case HW2Events.PLAYER_MINE_COLLISION: {
+				break;
+			}
+			case HW2Events.MINE_EXPLODED: {
 				break;
 			}
 			default: {
