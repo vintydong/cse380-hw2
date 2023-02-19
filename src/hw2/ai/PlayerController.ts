@@ -42,6 +42,12 @@ export default class PlayerController implements AI {
 	/** A timer for charging the player's laser cannon thing */
 	private laserTimer: Timer;
 
+	/** A timer for player's invulnerbility timer after collision */
+	private invulTimer: Timer;
+
+	// A boolean for player's invulerability status
+	private invulnerable: boolean;
+
 	// A receiver and emitter to hook into the event queue
 	private receiver: Receiver;
 	private emitter: Emitter;
@@ -59,6 +65,10 @@ export default class PlayerController implements AI {
 		this.emitter = new Emitter();
 
 		this.laserTimer = new Timer(2500, this.handleLaserTimerEnd, false);
+
+		// Initialize invulnerbility timer
+		this.invulTimer = new Timer(1000, this.handleInvulTimerEnd, false);
+		this.invulnerable = false;
 		
 		this.receiver.subscribe(HW2Events.SHOOT_LASER);
 		this.receiver.subscribe(HW2Events.PLAYER_MINE_COLLISION);
@@ -143,7 +153,7 @@ export default class PlayerController implements AI {
 		// If the player is out of air - start subtracting from the player's health
 		this.currentHealth = this.currentAir <= this.minAir ? MathUtils.clamp(this.currentHealth - deltaT*2, this.minHealth, this.maxHealth) : this.currentHealth;
 	
-		// Emit air/health events
+		// Emit air/health events to update health bar in HW2Scene.ts
 		this.emitter.fireEvent(HW2Events.PLAYER_AIR, {currentAir: this.currentAir, maxAir: this.maxAir});
 		this.emitter.fireEvent(HW2Events.PLAYER_DAMAGE, {currentHealth: this.currentHealth, maxHealth: this.maxHealth});
 	}
@@ -162,7 +172,12 @@ export default class PlayerController implements AI {
 				break;
 			}
 			case HW2Events.PLAYER_MINE_COLLISION: {
+				// Update player health value
 				this.handlePlayerDamage(event);
+
+				// Start invulnerability timer
+				this.invulnerable = true;
+				this.invulTimer.start();
 				break;
 			}
 			case HW2Events.DEAD: {
@@ -191,8 +206,9 @@ export default class PlayerController implements AI {
 	}
 
 	protected handlePlayerDamage(event: GameEvent): void {
-		this.currentHealth = this.currentHealth - 0.2;
-		console.debug("Taking damage", this.currentHealth);
+		// If the player is not invulnerable, subtract a health
+		if(!this.invulnerable)
+			this.currentHealth = this.currentHealth - 1;
 		this.owner.animation.playIfNotAlready(PlayerAnimations.HIT);
 		this.owner.animation.queue(PlayerAnimations.IDLE)
 	}
@@ -211,6 +227,16 @@ export default class PlayerController implements AI {
 		if (this.currentCharge < this.maxCharge) {
 			this.laserTimer.start();
 		}
+	}
+
+	/**
+	 * Callback for when invulnerbility timer has ended
+	 * 
+	 * @remarks
+	 * This function will reset the player status to no longer invulnerable
+	 */
+	protected handleInvulTimerEnd = () => {
+		this.invulnerable = false;
 	}
 
 } 
