@@ -166,6 +166,7 @@ export default class HW2Scene extends Scene {
 		this.receiver.subscribe(HW2Events.CHARGE_CHANGE);
 		this.receiver.subscribe(HW2Events.SHOOT_LASER);
 		this.receiver.subscribe(HW2Events.DEAD);
+		this.receiver.subscribe(HW2Events.PLAYER_DAMAGE);
 
 		// Subscribe to laser events
 		this.receiver.subscribe(HW2Events.FIRING_LASER);
@@ -189,10 +190,10 @@ export default class HW2Scene extends Scene {
 
 		// Handles mine and bubble collisions
 		let minesCollided = this.handleMinePlayerCollisions();
-		if(minesCollided > 0){
-			console.log("Emitting player dmg")
-			this.emitter.fireEvent(HW2Events.PLAYER_DAMAGE, {damage: minesCollided});
-		}
+		// if(minesCollided > 0){
+		// 	console.log("Emitting player dmg")
+		// 	this.emitter.fireEvent(HW2Events.PLAYER_DAMAGE, {damage: minesCollided});
+		// }
 
 		this.bubblesPopped += this.handleBubblePlayerCollisions();
 
@@ -244,6 +245,13 @@ export default class HW2Scene extends Scene {
 				break;
 			}
 			case HW2Events.PLAYER_MINE_COLLISION: {
+				break;
+			}
+			case HW2Events.PLAYER_DAMAGE: {
+				let currentHealth = event.data.get('currentHealth');
+				let maxHealth = event.data.get('maxHealth');
+
+				this.handleHealthChange(currentHealth, maxHealth);
 				break;
 			}
 			case HW2Events.MINE_EXPLODED: {

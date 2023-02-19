@@ -191,6 +191,8 @@ export default class PlayerController implements AI {
 		console.debug("Taking damage", this.currentHealth);
 		this.owner.animation.playIfNotAlready(PlayerAnimations.HIT);
 		this.owner.animation.queue(PlayerAnimations.IDLE)
+
+		this.emitter.fireEvent(HW2Events.PLAYER_DAMAGE, {currentHealth: this.currentHealth, maxHealth: this.maxHealth});
 	}
 
 	/** 
