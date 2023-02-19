@@ -167,6 +167,7 @@ export default class HW2Scene extends Scene {
 		this.receiver.subscribe(HW2Events.SHOOT_LASER);
 		this.receiver.subscribe(HW2Events.DEAD);
 		this.receiver.subscribe(HW2Events.PLAYER_DAMAGE);
+		this.receiver.subscribe(HW2Events.PLAYER_AIR);
 
 		// Subscribe to laser events
 		this.receiver.subscribe(HW2Events.FIRING_LASER);
@@ -252,6 +253,13 @@ export default class HW2Scene extends Scene {
 				let maxHealth = event.data.get('maxHealth');
 
 				this.handleHealthChange(currentHealth, maxHealth);
+				break;
+			}
+			case HW2Events.PLAYER_AIR: {
+				let currentAir = event.data.get('currentAir');
+				let maxAir = event.data.get('maxAir');
+
+				this.handleAirChange(currentAir, maxAir);
 				break;
 			}
 			case HW2Events.MINE_EXPLODED: {

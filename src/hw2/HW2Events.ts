@@ -46,8 +46,14 @@ export const HW2Events = {
      /**
      * The event that gets emitted when the player takes damage
      * 
-     * Has data: { damage: number }
+     * Has data: { currentHealth: number, maxHealth: number }
      */
     PLAYER_DAMAGE: "PLAYER_DAMAGE",
+    /**
+     * The event that gets emitted when the player air changes
+     * 
+     * Has data: { currentAir: number, maxAir: number }
+     */
+    PLAYER_AIR: "PLAYER_AIR",
     
 } as const;

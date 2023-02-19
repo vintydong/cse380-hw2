@@ -142,6 +142,10 @@ export default class PlayerController implements AI {
 
 		// If the player is out of air - start subtracting from the player's health
 		this.currentHealth = this.currentAir <= this.minAir ? MathUtils.clamp(this.currentHealth - deltaT*2, this.minHealth, this.maxHealth) : this.currentHealth;
+	
+		// Emit air/health events
+		this.emitter.fireEvent(HW2Events.PLAYER_AIR, {currentAir: this.currentAir, maxAir: this.maxAir});
+		this.emitter.fireEvent(HW2Events.PLAYER_DAMAGE, {currentHealth: this.currentHealth, maxHealth: this.maxHealth});
 	}
 	/**
 	 * This method handles all events that the reciever for the PlayerController is
@@ -191,8 +195,6 @@ export default class PlayerController implements AI {
 		console.debug("Taking damage", this.currentHealth);
 		this.owner.animation.playIfNotAlready(PlayerAnimations.HIT);
 		this.owner.animation.queue(PlayerAnimations.IDLE)
-
-		this.emitter.fireEvent(HW2Events.PLAYER_DAMAGE, {currentHealth: this.currentHealth, maxHealth: this.maxHealth});
 	}
 
 	/** 
