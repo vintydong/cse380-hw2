@@ -569,6 +569,33 @@ export default class HW2Scene extends Scene {
 	 */
 	protected spawnBubble(): void {
 		// TODO spawn bubbles!
+		let bubble: Graphic = this.bubbles.find((bubble: Graphic) => {
+			return !bubble.visible;
+		})
+
+		if(!bubble) return;
+
+		bubble.visible = true;
+		// Get size of viewport
+		let paddedViewportSize = this.viewport.getHalfSize().scaled(2).add(this.worldPadding);
+		let viewportSize = this.viewport.getHalfSize().scaled(2);
+
+		// Get viewport coords
+		let viewportLeft = this.viewport.getOrigin().x;
+		let viewportRight = this.viewport.getOrigin().x + viewportSize.x;
+		let viewportBottom = this.viewport.getOrigin().y + viewportSize.y;
+		let paddedViewportBottom = viewportBottom + this.worldPadding.x;
+
+		// viewportX <= x <= viewportX
+		// bottom >= y >= viewPortY
+		bubble.position.copy(RandUtils.randVec(viewportLeft, viewportRight, viewportBottom, paddedViewportBottom));
+		// while(bubble.position.distanceTo(this.player.position) < 100){
+		// 	mine.position.copy(RandUtils.randVec(paddedViewportSize.x, paddedViewportSize.x, paddedViewportSize.y - viewportSize.y, viewportSize.y));
+		// }
+
+		bubble.setAIActive(true, {});
+		// Start the bubble spawn timer
+		this.bubbleSpawnTimer.start(100);
 	}
 	/**
 	 * This function takes in a GameNode that may be out of bounds of the viewport and
