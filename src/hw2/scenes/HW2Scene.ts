@@ -792,18 +792,20 @@ export default class HW2Scene extends Scene {
 	 * an AABB and a Circle
 	 */
 	public handleBubblePlayerCollisions(): number {
-		// TODO check for collisions between the player and the bubbles
 		let collisions = 0;
 		for (let bubble of this.bubbles){
 			let bubbleCircle = bubble.collisionShape.getBoundingCircle();
 			let aabb = this.player.collisionShape.getBoundingRect();
 			if(bubble.visible && HW2Scene.checkAABBtoCircleCollision(aabb, bubbleCircle)){
-				console.log("BUBBLE COLLISION")
+				console.log("BUBBLE COLLISION with ", bubble.id)
 				this.emitter.fireEvent(HW2Events.PLAYER_BUBBLE_COLLISION, {id: bubble.id});
+				
+				// Hides bubble in BubbleBehavior.handlePlayerBubbleCollision
+				// Adds air in PlayerController.handlePlayerBubbleCollision				
 				collisions = collisions + 1;
 			}
 		}
-        return;
+        return collisions
 	}
 
 	/**

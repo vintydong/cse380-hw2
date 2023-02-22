@@ -1,8 +1,10 @@
 import AI from "../../Wolfie2D/DataTypes/Interfaces/AI";
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
 import GameEvent from "../../Wolfie2D/Events/GameEvent";
+import Receiver from "../../Wolfie2D/Events/Receiver";
 import Graphic from "../../Wolfie2D/Nodes/Graphic";
 import MathUtils from "../../Wolfie2D/Utils/MathUtils";
+import { HW2Events } from "../HW2Events";
 
 /**
  * A class that represents the behavior of the bubbles in the HW2Scene
@@ -11,6 +13,9 @@ import MathUtils from "../../Wolfie2D/Utils/MathUtils";
 export default class BubbleBehavior implements AI {
     // The GameNode that owns this behavior
     private owner: Graphic;
+
+    // Receiver for events related to bubble
+    private receiver: Receiver;
 
     // The current horizontal and vertical speed of the bubble
     private currentXSpeed: number;
@@ -28,7 +33,7 @@ export default class BubbleBehavior implements AI {
     private minYSpeed: number;
     private maxYSpeed: number;
 
-    public initializeAI(owner: Graphic, options: Record<string, any>): void {
+    initializeAI(owner: Graphic, options: Record<string, any>): void {
         this.owner = owner;
 
         this.currentXSpeed = 50;
@@ -41,24 +46,42 @@ export default class BubbleBehavior implements AI {
         this.minYSpeed = 50;
         this.maxYSpeed = 50;
 
+        this.receiver = new Receiver();
+		this.receiver.subscribe(HW2Events.PLAYER_BUBBLE_COLLISION);
+
         this.activate(options);
     }
 
-    public destroy(): void {
-        
+    destroy(): void {
+        this.receiver.destroy();
     }
 
-    public activate(options: Record<string, any>): void {}
+    activate(options: Record<string, any>): void {}
 
-    public handleEvent(event: GameEvent): void {
+    handleEvent(event: GameEvent): void {
         switch(event.type) {
+            case HW2Events.PLAYER_BUBBLE_COLLISION: {
+                this.handlePlayerBubbleCollision(event);
+                break;
+            }
             default: {
                 throw new Error("Unhandled event caught in BubbleBehavior! Event type: " + event.type);
             }
         }
     }
 
-    public update(deltaT: number): void {   
+    protected handlePlayerBubbleCollision(event: GameEvent): void {
+        let id = event.data.get("id");
+        // Hide bubble {id}
+        if (id === this.owner.id) {
+            this.owner.visible = false;
+        }
+    }
+
+    update(deltaT: number): void {   
+        while (this.receiver.hasNextEvent()) {
+            this.handleEvent(this.receiver.getNextEvent());
+        }
         // Only update the bubble if it's visible
         if (this.owner.visible) {
             // Increment the speeds

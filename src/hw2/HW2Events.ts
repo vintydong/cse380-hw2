@@ -7,7 +7,7 @@ export const HW2Events = {
      * 
      * Has data: { id: number }
      */
-	PLAYER_MINE_COLLISION: "PLAYER_MINE_COLLISION", 
+	PLAYER_MINE_COLLISION: "PLAYER_MINE_COLLISION",
 
     PLAYER_BUBBLE_COLLISION: "PLAYER_BUBBLE_COLLISION",
 
@@ -56,5 +56,5 @@ export const HW2Events = {
      * 
      * Has data: { currentAir: number, maxAir: number }
      */
-    PLAYER_AIR: "PLAYER_AIR",    
+    PLAYER_AIR: "PLAYER_AIR",   
 } as const;

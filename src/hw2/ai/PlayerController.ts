@@ -72,6 +72,7 @@ export default class PlayerController implements AI {
 		
 		this.receiver.subscribe(HW2Events.SHOOT_LASER);
 		this.receiver.subscribe(HW2Events.PLAYER_MINE_COLLISION);
+		this.receiver.subscribe(HW2Events.PLAYER_BUBBLE_COLLISION);
 		this.receiver.subscribe(HW2Events.DEAD);
 
 		this.activate(options);
@@ -180,6 +181,11 @@ export default class PlayerController implements AI {
 				this.invulTimer.start();
 				break;
 			}
+			case HW2Events.PLAYER_BUBBLE_COLLISION: {
+				// Update air value
+				this.handlePlayerAir(event);
+				break;
+			}
 			case HW2Events.DEAD: {
 				this.owner.animation.playIfNotAlready(PlayerAnimations.DEATH);
 				break;
@@ -211,6 +217,11 @@ export default class PlayerController implements AI {
 			this.currentHealth = this.currentHealth - 1;
 		this.owner.animation.playIfNotAlready(PlayerAnimations.HIT);
 		this.owner.animation.queue(PlayerAnimations.IDLE)
+	}
+
+	protected handlePlayerAir(event: GameEvent): void {
+		// Player has collided with an air bubble
+		this.currentAir = this.currentAir + 1;
 	}
 
 	/** 
