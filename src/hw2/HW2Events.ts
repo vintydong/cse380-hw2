@@ -9,6 +9,8 @@ export const HW2Events = {
      */
 	PLAYER_MINE_COLLISION: "PLAYER_MINE_COLLISION", 
 
+    PLAYER_BUBBLE_COLLISION: "PLAYER_BUBBLE_COLLISION",
+
     /**
      * The event that gets emitted when the charge of the player's laser beam changes
      * 
@@ -54,6 +56,5 @@ export const HW2Events = {
      * 
      * Has data: { currentAir: number, maxAir: number }
      */
-    PLAYER_AIR: "PLAYER_AIR",
-    
+    PLAYER_AIR: "PLAYER_AIR",    
 } as const;

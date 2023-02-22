@@ -248,6 +248,9 @@ export default class HW2Scene extends Scene {
 			case HW2Events.PLAYER_MINE_COLLISION: {
 				break;
 			}
+			case HW2Events.PLAYER_BUBBLE_COLLISION: {
+				break;
+			}
 			case HW2Events.PLAYER_DAMAGE: {
 				let currentHealth = event.data.get('currentHealth');
 				let maxHealth = event.data.get('maxHealth');
@@ -568,7 +571,6 @@ export default class HW2Scene extends Scene {
 	 * 							X THIS IS OUT OF BOUNDS
 	 */
 	protected spawnBubble(): void {
-		// TODO spawn bubbles!
 		let bubble: Graphic = this.bubbles.find((bubble: Graphic) => {
 			return !bubble.visible;
 		})
@@ -589,9 +591,6 @@ export default class HW2Scene extends Scene {
 		// viewportX <= x <= viewportX
 		// bottom >= y >= viewPortY
 		bubble.position.copy(RandUtils.randVec(viewportLeft, viewportRight, viewportBottom, paddedViewportBottom));
-		// while(bubble.position.distanceTo(this.player.position) < 100){
-		// 	mine.position.copy(RandUtils.randVec(paddedViewportSize.x, paddedViewportSize.x, paddedViewportSize.y - viewportSize.y, viewportSize.y));
-		// }
 
 		bubble.setAIActive(true, {});
 		// Start the bubble spawn timer
@@ -794,6 +793,16 @@ export default class HW2Scene extends Scene {
 	 */
 	public handleBubblePlayerCollisions(): number {
 		// TODO check for collisions between the player and the bubbles
+		let collisions = 0;
+		for (let bubble of this.bubbles){
+			let bubbleCircle = bubble.collisionShape.getBoundingCircle();
+			let aabb = this.player.collisionShape.getBoundingRect();
+			if(bubble.visible && HW2Scene.checkAABBtoCircleCollision(aabb, bubbleCircle)){
+				console.log("BUBBLE COLLISION")
+				this.emitter.fireEvent(HW2Events.PLAYER_BUBBLE_COLLISION, {id: bubble.id});
+				collisions = collisions + 1;
+			}
+		}
         return;
 	}
 
@@ -818,7 +827,7 @@ export default class HW2Scene extends Scene {
 		let collisions = 0;
 		for (let mine of this.mines) {
 			if (mine.visible && this.player.collisionShape.overlaps(mine.collisionShape)) {
-				console.log("COLLISION")
+				console.log("MINE COLLISION")
 				this.emitter.fireEvent(HW2Events.PLAYER_MINE_COLLISION, {id: mine.id});
 				collisions += 1;
 			}
@@ -869,8 +878,23 @@ export default class HW2Scene extends Scene {
 	 * @see MathUtils for more information about MathUtil functions
 	 */
 	public static checkAABBtoCircleCollision(aabb: AABB, circle: Circle): boolean {
-        // TODO implement collision detection for AABBs and Circles
-        return;
+		// https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-Detection
+
+		// Find vector from center-to-center
+		let {x: rectX, y: rectY} = aabb.center;
+		let {x: circX, y: circY} = circle.center;
+		let {x: rectHalfX, y: rectHalfY} = aabb.halfSize;
+
+		let vecX = MathUtils.clamp(rectX - circX, -rectHalfX, rectHalfX);
+		let vecY = MathUtils.clamp(rectY - circY, -rectHalfY, rectHalfY);
+		let diffVec = new Vec2(vecX, vecY);
+
+		let closestPoint = new Vec2(aabb.center.x + diffVec.x, aabb.center.y + diffVec.y);
+
+		let x = circle.center.x - closestPoint.x;
+		let y = circle.center.y - closestPoint.y;
+
+		return x*x + y*y < circle.radius * circle.radius;
 	}
 
     /** Methods for locking and wrapping nodes */
