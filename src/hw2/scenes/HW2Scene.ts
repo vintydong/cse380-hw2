@@ -201,6 +201,10 @@ export default class HW2Scene extends Scene {
 		// Handle timers
 		this.handleTimers();
 
+		// Tentative lock player movement
+		this.wrapPlayer(this.player, this.viewport.getCenter(), this.viewport.getHalfSize());
+		this.lockPlayer(this.player, this.viewport.getCenter(), this.viewport.getHalfSize());
+
         // TODO Remove despawning of mines and bubbles here
 
 		// Handle screen despawning of mines and bubbles
@@ -640,7 +644,21 @@ export default class HW2Scene extends Scene {
 	 * It may be helpful to make your own drawings while figuring out the math for this part.
 	 */
 	public handleScreenDespawn(node: CanvasNode): void {
-        // TODO - despawn the game nodes when they move out of the padded viewport
+		// Get padded viewport coordinates
+		let {x: paddedViewportLeft} = this.viewport.getOrigin().sub(this.worldPadding);
+		let viewportSize = this.viewport.getHalfSize().scaled(2);
+		
+		let paddedViewportRight = paddedViewportLeft + viewportSize.x + this.worldPadding.x * 2;
+		let {x: nodeX, y: nodeY} = node.position;
+
+		// console.log("Node: ", nodeX, nodeY);
+		// console.log("left: ", paddedViewportLeft, "right: ", paddedViewportRight);
+
+		if(nodeX < paddedViewportLeft || nodeX > paddedViewportRight){
+			// console.log("Despawning ", node.id);
+			// Despawn by moving to object pool
+			node.visible = false;
+		}
 	}
 
 	/** Methods for updating the UI */
@@ -945,8 +963,15 @@ export default class HW2Scene extends Scene {
 	 *
 	 * 							X THIS IS OUT OF BOUNDS													
 	 */
-	protected wrapPlayer(player: CanvasNode, viewportCenter: Vec2, viewportHalfSize: Vec2): void {
-		// TODO wrap the player around the top/bottom of the screen
+	protected wrapPlayer(player: CanvasNode, viewportCenter: Vec2, viewportHalfSize: Vec2): void {		
+		// Top and Bottom coordinates
+		let top = viewportCenter.y - viewportHalfSize.y;
+		let bottom = viewportCenter.y + viewportHalfSize.y;
+
+		let playerY = player.position.y;
+		
+		if(playerY < top) player.positionY = bottom;
+		else if(playerY > bottom) player.positionY = top;
 	}
 
     /**
@@ -989,7 +1014,14 @@ export default class HW2Scene extends Scene {
 	 * 
 	 */
 	protected lockPlayer(player: CanvasNode, viewportCenter: Vec2, viewportHalfSize: Vec2): void {
-		// TODO prevent the player from moving off the left/right side of the screen
+		let playerLeft = player.boundary.left;
+		let playerRight = player.boundary.right;
+
+		let viewportLeft = viewportCenter.x - viewportHalfSize.x;
+		let viewportRight = viewportCenter.x + viewportHalfSize.x;
+
+		if(playerRight > viewportRight) player.positionX = viewportRight - player.boundary.hw;
+		if(playerLeft < viewportLeft) player.positionX = viewportLeft + player.boundary.hw;
 	}
 
 	public handleTimers(): void {
