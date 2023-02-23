@@ -9,6 +9,7 @@ import GameEvent from "../../Wolfie2D/Events/GameEvent";
 
 import RandUtils from "../../Wolfie2D/Utils/RandUtils";
 import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
+import BasicRecording from "../../Wolfie2D/Playback/BasicRecording";
 
 // Layers in the main menu
 const MainMenuLayer = {
@@ -138,7 +139,11 @@ export default class MainMenu extends Scene {
     protected handleEvent(event: GameEvent): void {
         switch(event.type) {
             case MainMenuEvent.PLAY_GAME: {
-                this.sceneManager.changeToScene(Homework1_Scene, {seed: RandUtils.randomSeed(), recording: true});
+                let rseed = RandUtils.randomSeed();
+                this.sceneManager.changeToScene(Homework1_Scene, {seed: rseed, recording: true});
+                // Start recording
+                let recording = new BasicRecording(Homework1_Scene, {seed: rseed, recording: true});
+                this.emitter.fireEvent(GameEventType.START_RECORDING, {recording});
                 break;
             }
             case MainMenuEvent.CONTROLS: {
@@ -158,7 +163,7 @@ export default class MainMenu extends Scene {
                 break;
             }
             case MainMenuEvent.PLAY_RECORDING: {
-                // TODO play the recording here
+                this.emitter.fireEvent(GameEventType.PLAY_RECORDING, () => console.log('Recording stopped'));
                 break;
             }
             default: {

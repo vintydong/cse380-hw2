@@ -58,14 +58,17 @@ export default class PlaybackManager implements Updateable {
     protected handleEvent(event: GameEvent): void {
         switch(event.type) {
             case GameEventType.START_RECORDING: {
+                console.log("--------Started recording--------");
                 this.handleStartRecordingEvent(event);
                 break;
             }
             case GameEventType.STOP_RECORDING: {
+                console.log("--------Stopped recording--------");
                 this.handleStopRecordingEvent(event);
                 break;
             }
             case GameEventType.PLAY_RECORDING: {
+                console.log("--------Playing recording--------");
                 this.handlePlayRecordingEvent(event);
                 break;
             }

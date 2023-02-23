@@ -205,7 +205,7 @@ export default class HW2Scene extends Scene {
 		this.wrapPlayer(this.player, this.viewport.getCenter(), this.viewport.getHalfSize());
 		this.lockPlayer(this.player, this.viewport.getCenter(), this.viewport.getHalfSize());
 
-        // TODO Remove despawning of mines and bubbles here
+        // TODO Remove despawning of mines and bubbles here	
 
 		// Handle screen despawning of mines and bubbles
 		for (let mine of this.mines) if (mine.visible) this.handleScreenDespawn(mine);
@@ -1045,6 +1045,7 @@ export default class HW2Scene extends Scene {
 				minesDestroyed: this.minesDestroyed,
 				timePassed: this.timePassed
 			}, {});
+			this.emitter.fireEvent(GameEventType.STOP_RECORDING);
 		}
 	}
 
