@@ -914,7 +914,7 @@ export default class HW2Scene extends Scene {
 		let vecY = MathUtils.clamp(rectY - circY, -rectHalfY, rectHalfY);
 		let diffVec = new Vec2(vecX, vecY);
 
-		let closestPoint = new Vec2(aabb.center.x + diffVec.x, aabb.center.y + diffVec.y);
+		let closestPoint = new Vec2(aabb.center.x - diffVec.x, aabb.center.y - diffVec.y);
 
 		let x = circle.center.x - closestPoint.x;
 		let y = circle.center.y - closestPoint.y;
