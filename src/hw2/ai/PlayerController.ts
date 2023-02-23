@@ -67,7 +67,7 @@ export default class PlayerController implements AI {
 		this.laserTimer = new Timer(2500, this.handleLaserTimerEnd, false);
 
 		// Initialize invulnerbility timer
-		this.invulTimer = new Timer(1000, this.handleInvulTimerEnd, false);
+		this.invulTimer = new Timer(500, this.handleInvulTimerEnd, false);
 		this.invulnerable = false;
 		
 		this.receiver.subscribe(HW2Events.SHOOT_LASER);
@@ -176,9 +176,11 @@ export default class PlayerController implements AI {
 				// Update player health value
 				this.handlePlayerDamage(event);
 
-				// Start invulnerability timer
-				this.invulnerable = true;
-				this.invulTimer.start();
+				// Start invulnerability timer if hasn't started
+				if(this.invulTimer.isStopped()){
+					this.invulnerable = true;
+					this.invulTimer.start();
+				}
 				break;
 			}
 			case HW2Events.PLAYER_BUBBLE_COLLISION: {
