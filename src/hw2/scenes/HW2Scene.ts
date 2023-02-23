@@ -238,7 +238,12 @@ export default class HW2Scene extends Scene {
 				break;
 			}
 			case HW2Events.DEAD: {
-				this.gameOverTimer.start();
+				if(this.gameOverTimer.isStopped() || this.gameOverTimer.isPaused()){
+					if(!this.gameOverTimer.hasRun()){
+						this.gameOverTimer.start();
+						console.log("Starting timer");
+					}
+				}
 				break;
 			}
 			case HW2Events.CHARGE_CHANGE: {

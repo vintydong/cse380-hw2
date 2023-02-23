@@ -57,4 +57,5 @@ export const HW2Events = {
      * Has data: { currentAir: number, maxAir: number }
      */
     PLAYER_AIR: "PLAYER_AIR",   
+
 } as const;
