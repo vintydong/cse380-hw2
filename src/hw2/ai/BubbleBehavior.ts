@@ -75,6 +75,7 @@ export default class BubbleBehavior implements AI {
         // Hide bubble {id}
         if (id === this.owner.id) {
             this.owner.visible = false;
+            this.owner.isColliding = false;
         }
     }
 

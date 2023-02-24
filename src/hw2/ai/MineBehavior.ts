@@ -107,6 +107,7 @@ export default class MineBehavior implements AI {
         if (id === this.owner.id) {
             this.owner.position.copy(Vec2.ZERO);
             this.owner.visible = false;
+            this.owner.isColliding = false;
         }
     }
 }

@@ -191,6 +191,7 @@ export default class HW2Scene extends Scene {
 
 		// Handles mine and bubble collisions
 		let minesCollided = this.handleMinePlayerCollisions();
+		this.minesDestroyed = this.minesDestroyed + minesCollided;
 		// if(minesCollided > 0){
 		// 	console.log("Emitting player dmg")
 		// 	this.emitter.fireEvent(HW2Events.PLAYER_DAMAGE, {damage: minesCollided});
@@ -820,12 +821,15 @@ export default class HW2Scene extends Scene {
 			let bubbleCircle = bubble.collisionShape.getBoundingCircle();
 			let aabb = this.player.collisionShape.getBoundingRect();
 			if(bubble.visible && HW2Scene.checkAABBtoCircleCollision(aabb, bubbleCircle)){
-				console.log("BUBBLE COLLISION with ", bubble.id)
-				this.emitter.fireEvent(HW2Events.PLAYER_BUBBLE_COLLISION, {id: bubble.id});
-				
+
+				if(!bubble.isColliding){
+					console.log("BUBBLE COLLISION with ", bubble.id)
+					bubble.isColliding = true;
+					this.emitter.fireEvent(HW2Events.PLAYER_BUBBLE_COLLISION, {id: bubble.id});
+					collisions = collisions + 1;
+				}
 				// Hides bubble in BubbleBehavior.handlePlayerBubbleCollision
 				// Adds air in PlayerController.handlePlayerBubbleCollision				
-				collisions = collisions + 1;
 			}
 		}
         return collisions
@@ -851,8 +855,9 @@ export default class HW2Scene extends Scene {
 	public handleMinePlayerCollisions(): number {
 		let collisions = 0;
 		for (let mine of this.mines) {
-			if (mine.visible && this.player.collisionShape.overlaps(mine.collisionShape)) {
+			if (mine.visible && this.player.collisionShape.overlaps(mine.collisionShape) && !mine.isColliding) {
 				console.log("MINE COLLISION")
+				mine.isColliding = true;
 				this.emitter.fireEvent(HW2Events.PLAYER_MINE_COLLISION, {id: mine.id});
 				collisions += 1;
 			}
@@ -882,7 +887,9 @@ export default class HW2Scene extends Scene {
 		let collisions = 0;
 		if (laser.visible) {
 			for (let mine of mines) {
-				if (mine.collisionShape.overlaps(laser.collisionShape)) {
+				if (mine.collisionShape.overlaps(laser.collisionShape) && !mine.isColliding) {
+					console.log("LASER MINE", mine.id);
+					mine.isColliding = true;
 					this.emitter.fireEvent(HW2Events.LASER_MINE_COLLISION, { mineId: mine.id, laserId: laser.id });
 					collisions += 1;
 				}

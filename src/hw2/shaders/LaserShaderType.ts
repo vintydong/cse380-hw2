@@ -32,8 +32,6 @@ export default class LaserShaderType extends RectShaderType {
 
 		// Get color
 		const color = options.color.toWebGL();
-		console.log(options.color);
-		console.log("COLOR", color);
 
 		// Bind the buffer
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
