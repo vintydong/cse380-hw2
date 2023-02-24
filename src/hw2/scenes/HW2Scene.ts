@@ -146,6 +146,12 @@ export default class HW2Scene extends Scene {
 	public override startScene(){
 		this.worldPadding = new Vec2(64, 64);
 
+		// Set random seed
+		if(this.seed){
+			console.log("HW2 Seed: ", this.seed);
+			RandUtils.seed = this.seed;
+		}
+
 		// Create a background layer
 		this.addLayer(HW2Layers.BACKGROUND, 0);
 		this.initBackground();
