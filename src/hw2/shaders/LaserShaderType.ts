@@ -30,6 +30,11 @@ export default class LaserShaderType extends RectShaderType {
 		const vertexData = this.getVertices(options.size.x, options.size.y);
 		const FSIZE = vertexData.BYTES_PER_ELEMENT;
 
+		// Get color
+		const color = options.color.toWebGL();
+		console.log(options.color);
+		console.log("COLOR", color);
+
 		// Bind the buffer
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 		gl.bufferData(gl.ARRAY_BUFFER, vertexData, gl.STATIC_DRAW);
@@ -39,6 +44,10 @@ export default class LaserShaderType extends RectShaderType {
 		const a_Position = gl.getAttribLocation(program, "a_Position");
 		gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 2 * FSIZE, 0 * FSIZE);
 		gl.enableVertexAttribArray(a_Position);
+
+		const u_Color = gl.getUniformLocation(program, "u_Color");
+		gl.uniform4f(u_Color, color[0], color[1], color[2], color[3]);
+		// gl.uniform4f(u_Color, 0, 0, 1, 0.5);
 
 		/* ##### UNIFORMS ##### */
 
@@ -72,6 +81,7 @@ export default class LaserShaderType extends RectShaderType {
 			position: gc.position,
 			size: gc.size,
 			rotation: gc.rotation,
+			color: gc.color,
 		}
 		return options;
 	}

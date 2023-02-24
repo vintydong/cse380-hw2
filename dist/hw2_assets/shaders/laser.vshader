@@ -1,4 +1,5 @@
 attribute vec4 a_Position;
+attribute vec4 a_Color;
 
 uniform mat4 u_Transform;
 
