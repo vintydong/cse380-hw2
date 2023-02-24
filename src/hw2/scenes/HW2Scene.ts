@@ -239,6 +239,8 @@ export default class HW2Scene extends Scene {
 				break;
 			}
 			case HW2Events.DEAD: {
+				// Final health update -- max doesn't matter here
+				this.handleHealthChange(0, 20);
 				if(this.gameOverTimer.isStopped() || this.gameOverTimer.isPaused()){
 					if(!this.gameOverTimer.hasRun()){
 						this.gameOverTimer.start();
